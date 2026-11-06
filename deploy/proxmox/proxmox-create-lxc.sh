@@ -144,6 +144,7 @@ pct exec "${CT_ID}" -- bash -c '
   cd /opt/kontenai
   bun install --frozen-lockfile
   bun run db:generate
+  bun run db:push
   bun run build
 '
 
