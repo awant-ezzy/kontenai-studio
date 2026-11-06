@@ -4,7 +4,6 @@ export interface ChatMessage {
 }
 
 export interface ChatOptions {
-  temperature?: number;
   maxTokens?: number;
 }
 
