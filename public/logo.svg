@@ -1,29 +1,22 @@
-<?xml version="1.0" encoding="utf-8"?>
-<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-	 viewBox="0 0 30 30" style="enable-background:new 0 0 30 30;" xml:space="preserve">
-<defs>
-  <style type="text/css">
-    .st194{fill:#2D2D2D;stroke:#FFFFFF;stroke-width:0.6317;stroke-miterlimit:10;}
-    .st23{fill:#FFFFFF;}
-
-    .z-breathe {
-      animation: breathe 2.5s ease-in-out infinite;
-    }
-
-    @keyframes breathe {
-      0%, 100% { opacity: 0.7; }
-      50% { opacity: 1; }
-    }
-  </style>
-</defs>
-
-<g>
-  <path class="st194" d="M24.51,28.51H5.49c-2.21,0-4-1.79-4-4V5.49c0-2.21,1.79-4,4-4h19.03c2.21,0,4,1.79,4,4v19.03
-    C28.51,26.72,26.72,28.51,24.51,28.51z"/>
-  <g class="z-breathe">
-    <path class="st23" d="M15.47,7.1l-1.3,1.85c-0.2,0.29-0.54,0.47-0.9,0.47h-7.1V7.09C6.16,7.1,15.47,7.1,15.47,7.1z"/>
-    <polygon class="st23" points="24.3,7.1 13.14,22.91 5.7,22.91 16.86,7.1"/>
-    <path class="st23" d="M14.53,22.91l1.31-1.86c0.2-0.29,0.54-0.47,0.9-0.47h7.09v2.33H14.53z"/>
-  </g>
-</g>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 120" fill="none" role="img" aria-labelledby="title desc">
+  <title id="title">AWANT KONTEN AI STUDIO</title>
+  <desc id="desc">AWANT brand mark with a stylized letter A and creative AI spark.</desc>
+  <defs>
+    <linearGradient id="awant" x1="18" y1="12" x2="104" y2="104" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#55E6FF"/>
+      <stop offset=".52" stop-color="#3987FF"/>
+      <stop offset="1" stop-color="#8B5CF6"/>
+    </linearGradient>
+    <linearGradient id="word" x1="144" y1="24" x2="410" y2="94" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F8FAFC"/>
+      <stop offset="1" stop-color="#A5F3FC"/>
+    </linearGradient>
+  </defs>
+  <rect x="5" y="5" width="110" height="110" rx="28" fill="#0B1220" stroke="#26364F" stroke-width="2"/>
+  <path d="M27 88 52 29c2.2-5.2 9.6-5.2 11.8 0L89 88H72L58 53 44 88H27Z" fill="url(#awant)"/>
+  <path d="M43 72h30" stroke="#E0F2FE" stroke-width="7" stroke-linecap="round"/>
+  <path d="m86 21 3.8 9.2L99 34l-9.2 3.8L86 47l-3.8-9.2L73 34l9.2-3.8L86 21Z" fill="#67E8F9"/>
+  <circle cx="28" cy="25" r="3" fill="#A78BFA"/>
+  <text x="137" y="66" fill="url(#word)" font-family="Arial, Helvetica, sans-serif" font-size="49" font-weight="800" letter-spacing="2">AWANT</text>
+  <text x="140" y="94" fill="#67E8F9" font-family="Arial, Helvetica, sans-serif" font-size="17" font-weight="700" letter-spacing="4">KONTEN AI STUDIO</text>
 </svg>
