@@ -23,7 +23,7 @@ export function GeneratorForm({ onGenerated }: Props) {
   const [tone, setTone] = useState('casual');
   const [niche, setNiche] = useState('general');
   const [generateVoiceover, setGenerateVoiceover] = useState(true);
-  const [generateVideo, setGenerateVideo] = useState(true);
+  const generateVideo = false;
   const [loading, setLoading] = useState(false);
 
   const togglePlatform = (id: Platform) => {
@@ -91,7 +91,7 @@ export function GeneratorForm({ onGenerated }: Props) {
           disabled={loading}
         />
         <p className="text-xs text-muted-foreground">
-          Tulis topik bebas. AI akan otomatis buat script, caption, hashtag, thumbnail, voiceover & video pendek.
+          Tulis topik bebas. AI akan membuat script, caption, hashtag, thumbnail, dan voice-over.
         </p>
       </div>
 
@@ -199,12 +199,8 @@ export function GeneratorForm({ onGenerated }: Props) {
         >
           🎙️ Voiceover (TTS)
         </Badge>
-        <Badge
-          variant={generateVideo ? 'default' : 'outline'}
-          className="cursor-pointer select-none px-3 py-1.5"
-          onClick={() => !loading && setGenerateVideo((v) => !v)}
-        >
-          🎬 Video Pendek AI
+        <Badge variant="outline" className="select-none px-3 py-1.5 opacity-60">
+          🎬 Video AI (provider khusus belum tersedia)
         </Badge>
       </div>
 
@@ -229,7 +225,7 @@ export function GeneratorForm({ onGenerated }: Props) {
         )}
       </Button>
       <p className="text-center text-xs text-muted-foreground">
-        Pipeline: Script → Caption → Hashtag → Thumbnail → Voiceover → Video (≈ 30-90 detik)
+        Pipeline: Script → Caption → Hashtag → Thumbnail → Voiceover
       </p>
     </div>
   );

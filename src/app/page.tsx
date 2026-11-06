@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Sparkles, Zap, Github, Server, PanelLeftOpen, PanelLeftClose } from 'lucide-react';
+import { Zap, Server, PanelLeftOpen, PanelLeftClose, LogOut } from 'lucide-react';
 import { GeneratorForm } from '@/components/generator-form';
 import { GenerationProgress } from '@/components/generation-progress';
 import { ResultView } from '@/components/result-view';
@@ -74,6 +74,11 @@ export default function Home() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeContentId]);
 
+  const handleLogout = async () => {
+    await fetch('/api/auth/logout', { method: 'POST' });
+    window.location.href = '/login';
+  };
+
   const handleGenerated = () => {
     useAppStore.getState().bumpHistory();
   };
@@ -92,19 +97,20 @@ export default function Home() {
           >
             {sidebarOpen ? <PanelLeftClose className="h-5 w-5" /> : <PanelLeftOpen className="h-5 w-5" />}
           </Button>
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-lg shadow-primary/30">
-            <Sparkles className="h-5 w-5" />
-          </div>
+          <img src="/favicon.svg" alt="AWANT" className="h-10 w-10 rounded-xl" />
           <div>
-            <h1 className="text-base font-bold leading-tight">KontenAI Studio</h1>
-            <p className="text-[10px] text-muted-foreground leading-tight">Generator konten FB & YouTube sekali klik · AI terkini</p>
+            <h1 className="text-base font-extrabold leading-tight tracking-wide">AWANT</h1>
+            <p className="text-[10px] font-semibold tracking-[0.16em] text-cyan-400 leading-tight">KONTEN AI STUDIO</p>
           </div>
         </div>
-        <div className="hidden sm:flex items-center gap-2">
-          <div className="flex items-center gap-1.5 rounded-full bg-emerald-500/10 px-3 py-1 text-xs text-emerald-500">
+        <div className="flex items-center gap-2">
+          <div className="hidden sm:flex items-center gap-1.5 rounded-full bg-emerald-500/10 px-3 py-1 text-xs text-emerald-500">
             <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
-            Z.ai Online
+            OpenAI Provider
           </div>
+          <Button variant="ghost" size="sm" onClick={handleLogout} className="gap-1.5">
+            <LogOut className="h-4 w-4" /> Keluar
+          </Button>
           <a
             href="https://www.proxmox.com/"
             target="_blank"
@@ -153,7 +159,7 @@ export default function Home() {
                   Bikin Konten <span className="gradient-text">FB + YouTube + TikTok + IG</span><br />Sekali Klik.
                 </h2>
                 <p className="text-sm text-muted-foreground max-w-2xl">
-                  Cukup tulis topik, AI otomatis bikin script, caption, hashtag, thumbnail, voiceover & video pendek —
+                  Cukup tulis topik, AI otomatis bikin script, caption, hashtag, thumbnail, dan voice-over —
                   dioptimalkan untuk setiap platform. Hasilnya tinggal download.
                 </p>
               </div>
@@ -192,7 +198,7 @@ export default function Home() {
 
       {/* Footer */}
       <footer className="border-t border-border/40 bg-background/80 backdrop-blur px-4 py-3 text-center text-xs text-muted-foreground">
-        KontenAI Studio · Powered by Z.ai · Deploy ke Proxmox LXC Ubuntu · {new Date().getFullYear()}
+        AWANT Konten AI Studio · Powered by OpenAI · Deploy ke Proxmox LXC Ubuntu · {new Date().getFullYear()}
       </footer>
     </div>
   );

@@ -1,0 +1,32 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main, feature/openai-provider]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+      - name: Generate Prisma client
+        run: bun run db:generate
+        env:
+          DATABASE_URL: file:./ci.db
+      - name: Lint
+        run: bun run lint
+      - name: Build
+        run: bun run build
+        env:
+          DATABASE_URL: file:./ci.db
+          NODE_ENV: production
+          OPENAI_API_KEY: sk-ci-placeholder
+          ADMIN_PASSWORD: ci-placeholder-password
+          AUTH_SECRET: ci-placeholder-auth-secret-which-is-long-enough

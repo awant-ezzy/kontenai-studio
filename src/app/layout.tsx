@@ -15,9 +15,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "KontenAI Studio — Generator Konten FB & YouTube Sekali Klik",
+  title: "AWANT Konten AI Studio — Generator Konten Multi-Platform",
   description:
-    "Aplikasi AI terkini untuk membuat konten Facebook, YouTube, TikTok, dan Instagram sekali klik. Script, thumbnail, voiceover, dan video pendek otomatis dibuat AI.",
+    "Studio AI AWANT untuk membuat script, caption, hashtag, thumbnail, dan voice-over untuk Facebook, YouTube, TikTok, dan Instagram.",
   keywords: [
     "AI content generator",
     "Facebook content",
@@ -29,14 +29,14 @@ export const metadata: Metadata = {
     "KontenAI",
     "Proxmox",
   ],
-  authors: [{ name: "KontenAI Studio" }],
+  authors: [{ name: "AWANT Konten AI Studio" }],
   icons: {
     icon: "/favicon.svg",
   },
   openGraph: {
-    title: "KontenAI Studio",
-    description: "Generator konten AI sekali klik untuk Facebook & YouTube",
-    siteName: "KontenAI Studio",
+    title: "AWANT Konten AI Studio",
+    description: "Studio kreator konten AI multi-platform dari AWANT.",
+    siteName: "AWANT Konten AI Studio",
     type: "website",
   },
 };

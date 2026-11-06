@@ -1,7 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
-  <rect width="64" height="64" rx="14" fill="#0F0F0F"/>
-  <path d="M14 24c0-3.3 2.7-6 6-6h24c3.3 0 6 2.7 6 6v16c0 3.3-2.7 6-6 6H20c-3.3 0-6-2.7-6-6V24z" fill="#FF0000"/>
-  <path d="M28 22v20l14-10-14-10z" fill="#fff"/>
-  <circle cx="50" cy="14" r="6" fill="#FF0000" opacity="0.9"/>
-  <text x="50" y="17" text-anchor="middle" font-family="Arial, sans-serif" font-size="7" font-weight="bold" fill="#fff">AI</text>
+  <defs><linearGradient id="a" x1="10" y1="8" x2="55" y2="58" gradientUnits="userSpaceOnUse"><stop stop-color="#55E6FF"/><stop offset=".55" stop-color="#3987FF"/><stop offset="1" stop-color="#8B5CF6"/></linearGradient></defs>
+  <rect width="64" height="64" rx="16" fill="#0B1220"/>
+  <path d="M10 51 26 14c1.8-4.2 7.8-4.2 9.6 0L52 51H41L31 26 21 51H10Z" fill="url(#a)"/>
+  <path d="M20 41h22" stroke="#E0F2FE" stroke-width="5" stroke-linecap="round"/>
+  <path d="m49 8 2.4 5.8L57 16l-5.6 2.4L49 24l-2.4-5.6L41 16l5.6-2.2L49 8Z" fill="#67E8F9"/>
 </svg>

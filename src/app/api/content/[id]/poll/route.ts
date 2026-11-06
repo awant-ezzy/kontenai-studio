@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { isAuthenticatedRequest } from '@/lib/auth';
 import { db } from '@/lib/db';
 
 export const runtime = 'nodejs';
@@ -8,6 +9,7 @@ export async function GET(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  if (!isAuthenticatedRequest(req)) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   const { id } = await params;
   const sinceStr = req.nextUrl.searchParams.get('since');
   const since = sinceStr ? parseInt(sinceStr, 10) : 0;

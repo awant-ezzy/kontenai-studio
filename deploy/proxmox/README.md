@@ -1,247 +1,104 @@
-# KontenAI Studio — Deploy ke Proxmox LXC Ubuntu
+# KontenAI Studio — Deployment Proxmox LXC
 
-Aplikasi AI generator konten Facebook + YouTube + TikTok + Instagram sekali klik. Berbasis Next.js 16 + TypeScript + Prisma (SQLite) + Z.ai SDK.
+Aplikasi Next.js 16 + TypeScript + Prisma SQLite dengan OpenAI API untuk generasi teks, gambar, dan voice-over.
 
----
+## Catatan sebelum instalasi
 
-## Apa yang dihasilkan AI dari satu topik?
+- Gunakan CT ID baru. Script bootstrap **tidak akan menghapus atau menimpa CT yang sudah ada**.
+- Default CT: 4 core, RAM 4 GB, disk 20 GB. Sesuaikan resource dengan kebutuhan.
+- Siapkan API key OpenAI dari dashboard platform OpenAI.
+- Login admin sudah disediakan melalui `ADMIN_PASSWORD` dan `AUTH_SECRET`. Tetap aktifkan HTTPS dan batasi akses jaringan.
+- Video generation belum didukung oleh adapter OpenAI versi ini.
 
-| Asset | YouTube | Facebook | TikTok | Instagram |
-|---|---|---|---|---|
-| 3 Judul | ✓ | ✓ | ✓ | ✓ |
-| Script video (60-90 dtk) | ✓ | ✓ | ✓ | ✓ |
-| Caption + emoji | ✓ | ✓ | ✓ | ✓ |
-| 8-12 Hashtag | ✓ | ✓ | ✓ | ✓ |
-| Deskripsi video | ✓ | ✓ | ✓ | ✓ |
-| Thumbnail (rasio sesuai platform) | 16:9 | 1:1 | 9:16 | 4:5 |
-| Voiceover AI (TTS) | ✓ | ✓ | ✓ | ✓ |
-| Video pendek AI 5 detik | ✓ (shared) | ✓ (shared) | ✓ (shared) | ✓ (shared) |
+## Bootstrap
 
-Setiap aset bisa di-download / di-copy langsung dari UI.
-
----
-
-## Cara Deploy ke Proxmox (3 langkah)
-
-### Langkah 1: Dapatkan Z.ai API key
-
-1. Daftar di https://z.ai/
-2. Buat API key di dashboard.
-
-### Langkah 2: Jalankan bootstrap script di Proxmox host
+Jalankan di shell Proxmox sebagai root, dari folder repository:
 
 ```bash
-# Login ke Proxmox host shell (web UI > Node > Shell)
-# atau via SSH ke root@proxmox-host
-
-# Clone / copy project ke Proxmox host
-git clone https://your-repo/kontenai-studio.git
-cd kontenai-studio
-
-# Buat LXC container otomatis (default: CT 200, hostname=kontenai, 4 core, 4GB RAM, 20GB disk)
-bash deploy/proxmox/proxmox-create-lxc.sh
-
-# Atau custom:
-bash deploy/proxmox/proxmox-create-lxc.sh 201 kontenai MyPassword123
+bash deploy/proxmox/proxmox-create-lxc.sh 220 kontenai
 ```
 
-Script akan otomatis:
-- Download template Ubuntu 24.04 LXC
-- Buat container unprivileged dengan nesting=1
-- Install Node.js 20, Bun, Nginx, ffmpeg, imagemagick
-- Push kode aplikasi ke `/opt/kontenai`
-- Install dependencies + build Next.js standalone
-- Setup systemd service `kontenai.service` (auto-restart, auto-start on boot)
-- Setup Nginx reverse proxy di port 80
-- Enable UFW firewall (port 80 terbuka)
+Ganti `220` dengan CT ID yang benar-benar kosong. Script meminta password root CT secara interaktif jika argumen password tidak diberikan.
 
-### Langkah 3: Pasang Z.ai API key
+Script membuat Ubuntu 24.04 LXC, memasang Node.js, Bun, Nginx, menyalin source, membuat direktori SQLite dan upload, membangun Next.js, serta menyiapkan systemd.
+
+## Konfigurasi OpenAI
+
+Masuk ke container:
 
 ```bash
-# Edit config
-pct exec 200 -- nano /opt/kontenai/.z-ai-config
-
-# Isi:
-# {
-#   "baseUrl": "https://api.z.ai/api/v1",
-#   "apiKey": "AKTUAL_KEY_KAMU"
-# }
-
-# Restart service
-pct exec 200 -- systemctl restart kontenai
-
-# Cek status
-pct exec 200 -- systemctl status kontenai
+pct enter 220
+nano /opt/kontenai/.env
 ```
 
-Akses aplikasi di `http://<IP-CONTAINER>/`.
+Isi API key server-side:
 
----
+```dotenv
+DATABASE_URL="file:/opt/kontenai/db/custom.db"
+NODE_ENV=production
+PORT=3000
+HOST=0.0.0.0
+ADMIN_PASSWORD="password_admin_panjang_dan_unik"
+AUTH_SECRET="hasil_openssl_rand_hex_32"
+OPENAI_API_KEY="isi_api_key_di_server"
+OPENAI_TEXT_MODEL="gpt-6-luna"
+OPENAI_IMAGE_MODEL="gpt-image-2.5-flare"
+OPENAI_TTS_MODEL="gpt-4o-mini-tts"
+```
 
-## Cara Cek IP Container
+Lindungi file dan restart service:
 
 ```bash
-pct exec 200 -- ip -4 addr show eth0 | grep inet
+chmod 600 /opt/kontenai/.env
+systemctl restart kontenai
+systemctl status kontenai --no-pager
 ```
 
-Atau dari Proxmox web UI > Container > Resources > Network.
+Buat nilai acak untuk `AUTH_SECRET` dengan `openssl rand -hex 32`. Gunakan password admin yang kuat dan unik. Jangan mengirim API key melalui chat, commit kredensial ke Git, atau menggunakan variabel `NEXT_PUBLIC_*`. Catatan: model TTS `gpt-4o-mini-tts` dijadwalkan dihentikan pada 6 Januari 2027; migrasikan adapter sebelum tanggal tersebut.
 
----
+## Update aman
 
-## Update Aplikasi
-
-### Opsi A: Update via Git (jika repo di-deploy lewat git)
+Pastikan source di container adalah Git checkout yang benar. Kemudian:
 
 ```bash
-pct exec 200 -- bash /opt/kontenai/deploy/proxmox/update.sh
+bash /opt/kontenai/deploy/proxmox/update.sh
 ```
 
-### Opsi B: Re-deploy dari Proxmox host
+Script akan:
+1. Mengambil perubahan Git dengan fast-forward saja.
+2. Memasang dependency terkunci.
+3. Menghentikan service dan membuat backup database SQLite.
+4. Membuat Prisma Client dan menerapkan schema tanpa `--accept-data-loss`.
+5. Build aplikasi dan memulai ulang service.
+6. Memeriksa status service.
+
+Jika Prisma meminta perubahan destruktif, proses harus dihentikan dan schema/data diperiksa manual. Jangan menggunakan `db:reset` pada database produksi.
+
+## Backup data
 
 ```bash
-cd /path/ke/kontenai-studio
-git pull
-bash deploy/proxmox/proxmox-create-lxc.sh 200 kontenai  # destroy + recreate
+mkdir -p /opt/kontenai/backups
+chmod 700 /opt/kontenai/backups
+sqlite3 /opt/kontenai/db/custom.db '.backup /opt/kontenai/backups/manual-backup.db'
+tar czf /opt/kontenai/backups/uploads-$(date +%Y%m%d).tar.gz -C /opt/kontenai/public uploads
 ```
 
----
+Simpan salinan backup di luar container juga.
 
-## Akses & Log
+## Nginx dan HTTPS
+
+Nginx reverse proxy disiapkan pada port 80. Sebelum mengarahkan domain publik, selesaikan autentikasi admin, pembatasan API, dan konfigurasi HTTPS. Setelah DNS A record mengarah ke alamat publik yang benar, sertifikat dapat dipasang dengan Certbot.
+
+## Log dan troubleshooting
 
 ```bash
-# Masuk ke container
-pct enter 200
-# atau
-pct exec 200 -- bash
-
-# Lihat log aplikasi
-pct exec 200 -- tail -f /var/log/kontenai.log
-
-# Lihat status service
-pct exec 200 -- systemctl status kontenai
-
-# Restart service
-pct exec 200 -- systemctl restart kontenai
+journalctl -u kontenai -n 100 --no-pager
+tail -f /var/log/kontenai.log
+systemctl restart kontenai
 ```
 
----
+SQLite: `/opt/kontenai/db/custom.db`
 
-## Konfigurasi LXC Container di Proxmox
+Upload: `/opt/kontenai/public/uploads/`
 
-Setting default dari script:
-
-| Item | Nilai | Catatan |
-|---|---|---|
-| CT ID | 200 | |
-| Hostname | kontenai | |
-| OS | Ubuntu 24.04 LTS | |
-| Type | Unprivileged | Lebih aman |
-| Nesting | Enabled | Wajib untuk Bun |
-| Memory | 4 GB | Naikkan ke 8 GB jika video gen aktif |
-| CPU | 4 core | |
-| Disk | 20 GB | Naikkan ke 40 GB jika banyak aset |
-| Swap | 2 GB | |
-| Network | vmbr0 DHCP | Ganti static IP di script jika perlu |
-| Auto-start | Yes | Start saat host boot |
-
-Naikkan memory ke 8 GB+ jika sering pakai video generation (5 detik 720p perlu ~2 GB peak).
-
----
-
-## HTTPS dengan Let's Encrypt
-
-```bash
-# Pastikan domain sudah di-DNS A record ke IP container
-pct exec 200 -- apt-get install -y certbot python3-certbot-nginx
-pct exec 200 -- certbot --nginx -d kontenai.example.com
-```
-
-Certbot akan auto-edit config Nginx dan setup auto-renew.
-
----
-
-## Backup & Restore
-
-### Backup container (dari Proxmox host)
-```bash
-vzdump 200 --storage local --mode snapshot --compress zstd
-# Hasil: /var/lib/vz/dump/vzdump-lxc-200-*.tar.zst
-```
-
-### Restore
-```bash
-pct restore 201 /var/lib/vz/dump/vzdump-lxc-200-<timestamp>.tar.zst --storage local-lvm
-```
-
-### Backup hanya data user (asset uploads + database)
-```bash
-pct exec 200 -- tar czf /tmp/kontenai-data.tar.gz \
-  -C /opt/kontenai db public/uploads
-pct pull 200 /tmp/kontenai-data.tar.gz ./kontenai-data-backup.tar.gz
-```
-
----
-
-## Struktur Folder di Container
-
-```
-/opt/kontenai/
-├── .next/                 # build output (standalone)
-│   └── standalone/        # entry point server.js
-├── public/
-│   └── uploads/           # AI assets (thumbnails, voiceovers)
-├── db/
-│   └── custom.db          # SQLite database
-├── prisma/
-│   └── schema.prisma
-├── src/                   # source code
-├── .z-ai-config           # Z.ai API key
-├── .env                   # env vars
-└── deploy/proxmox/        # script deploy
-```
-
----
-
-## Troubleshooting
-
-### Service tidak mau start
-```bash
-pct exec 200 -- journalctl -u kontenai -n 50 --no-pager
-pct exec 200 -- tail -50 /var/log/kontenai.log
-```
-
-### Video generation timeout
-Default timeout video gen adalah 3 menit. Untuk performance, gunakan `quality: 'speed'` (sudah default) dan `duration: 5`. Bila perlu durasi 10 detik, naikkan memory container.
-
-### TTS input > 1024 karakter
-Aplikasi sudah otomatis split script menjadi chunk ≤900 karakter dan merge WAV hasil. Tidak perlu intervensi manual.
-
-### Rate limit Z.ai (429)
-Aplikasi sudah sequential per platform + backoff retry 1s/2s/4s. Jika masih sering kena limit, kurangi jumlah platform simultan atau tambah delay di `src/app/api/generate/route.ts`.
-
-### Reset database
-```bash
-pct exec 200 -- bash -c 'cd /opt/kontenai && bun run db:reset'
-pct exec 200 -- systemctl restart kontenai
-```
-
-### Hapus semua aset (file upload) tapi keep database
-```bash
-pct exec 200 -- rm -rf /opt/kontenai/public/uploads/*
-```
-
----
-
-## Resource Requirements
-
-| Skala | CPU | RAM | Disk | Bandwidth |
-|---|---|---|---|---|
-| Personal (1-5 gen/hari) | 2 core | 4 GB | 20 GB | 1 GB/bln |
-| Tim kecil (20 gen/hari) | 4 core | 8 GB | 40 GB | 5 GB/bln |
-| Agensi (100+ gen/hari) | 8 core | 16 GB | 100 GB | 20 GB/bln |
-
----
-
-## Lisensi
-
-MIT — bebas pakai, modifikasi, dan distribusi.
+Environment: `/opt/kontenai/.env`
