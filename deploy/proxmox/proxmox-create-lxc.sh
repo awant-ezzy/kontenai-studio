@@ -157,7 +157,7 @@ pct exec "${CT_ID}" -- bash -c '
 echo ">> Creating OpenAI environment file..."
 pct exec "${CT_ID}" -- bash -c "touch /opt/kontenai/.env
 chmod 600 /opt/kontenai/.env
-echo 'Add OPENAI_API_KEY to /opt/kontenai/.env after deployment.'"
+echo 'Set ADMIN_PASSWORD, AUTH_SECRET, and OPENAI_API_KEY in /opt/kontenai/.env before login.'"
 
 echo ">> Setting up systemd service..."
 pct exec "${CT_ID}" -- bash -c "cat > /etc/systemd/system/kontenai.service <<'EOF'
