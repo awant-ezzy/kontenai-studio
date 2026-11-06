@@ -46,3 +46,9 @@ export function verifyAdminPassword(candidate: string): boolean {
   const actual = Buffer.from(candidate);
   return expected.length === actual.length && timingSafeEqual(expected, actual);
 }
+
+export function isAuthenticatedRequest(request: {
+  cookies: { get(name: string): { value: string } | undefined };
+}): boolean {
+  return verifySessionToken(request.cookies.get(SESSION_COOKIE)?.value);
+}
