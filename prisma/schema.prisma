@@ -1,0 +1,42 @@
+// Prisma schema for KontenAI Studio
+// One-click AI content generator for YouTube, Facebook, TikTok, Instagram
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Content {
+  id        String   @id @default(cuid())
+  topic     String
+  language  String   // "id" | "en"
+  platforms String   // JSON string: ["youtube","facebook","tiktok","instagram"]
+  tone      String?  // casual, professional, educational, humorous, inspirational
+  niche     String?  // tech, food, lifestyle, finance, education, entertainment
+  status    String   @default("pending") // pending | running | completed | failed
+  progress  Int      @default(0) // 0-100
+  step      String?  // current step description
+  error     String?
+  assets    Asset[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([createdAt])
+}
+
+model Asset {
+  id        String   @id @default(cuid())
+  contentId String
+  content   Content @relation(fields: [contentId], references: [id], onDelete: Cascade)
+  platform  String  // youtube | facebook | tiktok | instagram | common
+  type      String  // title | script | caption | hashtags | thumbnail | voiceover | video | description
+  value     String  // text content or filename
+  meta      String? // JSON metadata (size, duration, mime, etc.)
+  createdAt DateTime @default(now())
+
+  @@index([contentId, platform, type])
+}
