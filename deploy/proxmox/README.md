@@ -38,6 +38,8 @@ DATABASE_URL="file:/opt/kontenai/db/custom.db"
 NODE_ENV=production
 PORT=3000
 HOST=0.0.0.0
+ADMIN_PASSWORD="password_admin_panjang_dan_unik"
+AUTH_SECRET="hasil_openssl_rand_hex_32"
 OPENAI_API_KEY="isi_api_key_di_server"
 OPENAI_TEXT_MODEL="gpt-6-luna"
 OPENAI_IMAGE_MODEL="gpt-image-2.5-flare"
@@ -52,7 +54,7 @@ systemctl restart kontenai
 systemctl status kontenai --no-pager
 ```
 
-Jangan mengirim API key melalui chat, commit ke Git, atau menggunakan variabel `NEXT_PUBLIC_*`.
+Buat nilai acak untuk `AUTH_SECRET` dengan `openssl rand -hex 32`. Gunakan password admin yang kuat dan unik. Jangan mengirim API key melalui chat, commit kredensial ke Git, atau menggunakan variabel `NEXT_PUBLIC_*`.
 
 ## Update aman
 
