@@ -418,7 +418,7 @@ export async function POST(req: NextRequest) {
     const tone = body.tone || 'casual';
     const niche = body.niche || 'general';
     const wantVoiceover = body.generateVoiceover !== false;
-    const wantVideo = body.generateVideo !== false;
+    const wantVideo = body.generateVideo === true;
 
     // Create content record
     const content = await db.content.create({
