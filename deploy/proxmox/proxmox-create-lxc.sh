@@ -121,7 +121,7 @@ TAR_FILE="/tmp/kontenai-$(date +%s).tar.gz"
 tar -czf "${TAR_FILE}" \
   --exclude='node_modules' --exclude='.next' --exclude='db' \
   --exclude='public/uploads' --exclude='dev.log' --exclude='server.log' \
-  --exclude='.zscripts' --exclude='.env' --exclude='.z-ai-config' \
+  --exclude='.env' \
   -C "${REPO_DIR}" .
 
 pct push "${CT_ID}" "${TAR_FILE}" /tmp/kontenai.tar.gz
