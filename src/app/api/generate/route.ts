@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import { chatJSON, generateImage, generateTTS, generateVideo, saveBase64Image, saveBuffer } from '@/lib/zai';
+import { chatJSON } from '@/lib/openai';
+import { generateImage, generateTTS, generateVideo, saveBase64Image, saveBuffer } from '@/lib/zai';
 import { ensureUploadsDir, getPublicUrl, PLATFORM_IMAGE_SIZE, PLATFORM_LABEL } from '@/lib/storage';
 import path from 'path';
 
