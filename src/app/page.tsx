@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Sparkles, Zap, Github, Server, PanelLeftOpen, PanelLeftClose, LogOut } from 'lucide-react';
+import { Zap, Server, PanelLeftOpen, PanelLeftClose, LogOut } from 'lucide-react';
 import { GeneratorForm } from '@/components/generator-form';
 import { GenerationProgress } from '@/components/generation-progress';
 import { ResultView } from '@/components/result-view';
@@ -97,12 +97,10 @@ export default function Home() {
           >
             {sidebarOpen ? <PanelLeftClose className="h-5 w-5" /> : <PanelLeftOpen className="h-5 w-5" />}
           </Button>
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-lg shadow-primary/30">
-            <Sparkles className="h-5 w-5" />
-          </div>
+          <img src="/favicon.svg" alt="AWANT" className="h-10 w-10 rounded-xl" />
           <div>
-            <h1 className="text-base font-bold leading-tight">KontenAI Studio</h1>
-            <p className="text-[10px] text-muted-foreground leading-tight">Generator konten multi-platform dengan OpenAI</p>
+            <h1 className="text-base font-extrabold leading-tight tracking-wide">AWANT</h1>
+            <p className="text-[10px] font-semibold tracking-[0.16em] text-cyan-400 leading-tight">KONTEN AI STUDIO</p>
           </div>
         </div>
         <div className="flex items-center gap-2">
@@ -200,7 +198,7 @@ export default function Home() {
 
       {/* Footer */}
       <footer className="border-t border-border/40 bg-background/80 backdrop-blur px-4 py-3 text-center text-xs text-muted-foreground">
-        KontenAI Studio · Powered by OpenAI · Deploy ke Proxmox LXC Ubuntu · {new Date().getFullYear()}
+        AWANT Konten AI Studio · Powered by OpenAI · Deploy ke Proxmox LXC Ubuntu · {new Date().getFullYear()}
       </footer>
     </div>
   );
