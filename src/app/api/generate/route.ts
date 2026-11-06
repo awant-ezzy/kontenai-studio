@@ -6,7 +6,7 @@ import { ensureUploadsDir, getPublicUrl, PLATFORM_IMAGE_SIZE, PLATFORM_LABEL } f
 import path from 'path';
 
 export const runtime = 'nodejs';
-export const maxDurationSeconds = 600;
+export const maxDuration = 600;
 
 interface GenerationPayload {
   topic: string;
