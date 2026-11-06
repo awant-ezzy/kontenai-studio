@@ -7,7 +7,7 @@ Aplikasi Next.js 16 + TypeScript + Prisma SQLite dengan OpenAI API untuk generas
 - Gunakan CT ID baru. Script bootstrap **tidak akan menghapus atau menimpa CT yang sudah ada**.
 - Default CT: 4 core, RAM 4 GB, disk 20 GB. Sesuaikan resource dengan kebutuhan.
 - Siapkan API key OpenAI dari dashboard platform OpenAI.
-- Versi ini belum menyediakan autentikasi admin aplikasi. Jangan membuka port aplikasi ke internet publik sebelum autentikasi dan proteksi API ditambahkan.
+- Login admin sudah disediakan melalui `ADMIN_PASSWORD` dan `AUTH_SECRET`. Tetap aktifkan HTTPS dan batasi akses jaringan.
 - Video generation belum didukung oleh adapter OpenAI versi ini.
 
 ## Bootstrap
@@ -54,7 +54,7 @@ systemctl restart kontenai
 systemctl status kontenai --no-pager
 ```
 
-Buat nilai acak untuk `AUTH_SECRET` dengan `openssl rand -hex 32`. Gunakan password admin yang kuat dan unik. Jangan mengirim API key melalui chat, commit kredensial ke Git, atau menggunakan variabel `NEXT_PUBLIC_*`.
+Buat nilai acak untuk `AUTH_SECRET` dengan `openssl rand -hex 32`. Gunakan password admin yang kuat dan unik. Jangan mengirim API key melalui chat, commit kredensial ke Git, atau menggunakan variabel `NEXT_PUBLIC_*`. Catatan: model TTS `gpt-4o-mini-tts` dijadwalkan dihentikan pada 6 Januari 2027; migrasikan adapter sebelum tanggal tersebut.
 
 ## Update aman
 
