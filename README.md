@@ -1,6 +1,6 @@
 # KontenAI Studio
 
-> Generator konten Facebook + YouTube + TikTok + Instagram sekali klik dengan AI terkini (Z.ai).
+> Generator konten Facebook + YouTube + TikTok + Instagram sekali klik. Generasi teks menggunakan OpenAI; fitur media lama masih menggunakan Z.ai selama migrasi bertahap.
 
 ![Dark Mode UI](./public/favicon.svg)
 
@@ -23,19 +23,20 @@
 # 1. Install dependencies
 bun install
 
-# 2. Setup Z.ai API key
-mkdir -p ~/.z-ai
-cat > ~/.z-ai-config <<EOF
-{
-  "baseUrl": "https://api.z.ai/api/v1",
-  "apiKey": "YOUR_KEY"
-}
-EOF
+# 2. Configure environment
+cp .env.example .env
+# Edit .env and set OPENAI_API_KEY on the server
 
-# 3. Push DB schema
+# 3. Create the SQLite directory
+mkdir -p db
+
+# 4. Generate Prisma client
+bun run db:generate
+
+# 5. Push DB schema (development only; back up data first)
 bun run db:push
 
-# 4. Run dev server
+# 6. Run dev server
 bun run dev
 # → http://localhost:3000
 ```
@@ -47,7 +48,7 @@ Lihat: [`deploy/proxmox/README.md`](./deploy/proxmox/README.md)
 Cepat:
 ```bash
 bash deploy/proxmox/proxmox-create-lxc.sh 200 kontenai MyPassword123
-pct exec 200 -- nano /opt/kontenai/.z-ai-config  # isi API key
+pct exec 200 -- nano /opt/kontenai/.env  # isi OPENAI_API_KEY
 pct exec 200 -- systemctl restart kontenai
 ```
 
@@ -57,7 +58,8 @@ Akses: `http://<IP-CONTAINER>/`
 
 - **Framework**: Next.js 16 (App Router) + TypeScript 5
 - **DB**: Prisma + SQLite (file-based, no external DB needed)
-- **AI**: Z.ai SDK (chat, image gen, TTS, video gen)
+- **AI teks**: OpenAI Chat Completions API (server-side)
+- **AI media legacy**: Z.ai (image generation, TTS, video generation; migrasi bertahap)
 - **UI**: Tailwind CSS 4 + shadcn/ui + Lucide icons
 - **State**: Zustand
 - **Reverse proxy**: Nginx (di Proxmox container)
@@ -65,10 +67,10 @@ Akses: `http://<IP-CONTAINER>/`
 
 ## 🗂️ Pipeline AI (sekali klik)
 
-1. **Text** (per platform, sequential): 3 judul + script + caption + 8-12 hashtag + deskripsi + thumbnail prompt
-2. **Thumbnail**: Z.ai image gen dengan ukuran per platform (16:9, 1:1, 9:16, 4:5)
-3. **Voiceover**: TTS dengan chunking ≤900 char + WAV merge
-4. **Video**: Z.ai video gen 5 detik 720p (shared antar platform)
+1. **Text** (per platform, sequential): OpenAI menghasilkan 3 judul + script + caption + 8-12 hashtag + deskripsi + thumbnail prompt
+2. **Thumbnail**: Z.ai image generation (migrasi ke OpenAI belum dilakukan)
+3. **Voiceover**: Z.ai TTS (migrasi ke OpenAI belum dilakukan)
+4. **Video**: Z.ai video generation 5 detik 720p (migrasi ke OpenAI belum dilakukan)
 
 Total waktu: ~30-90 detik per generation (tergantung jumlah platform).
 
@@ -86,7 +88,8 @@ Total waktu: ~30-90 detik per generation (tergantung jumlah platform).
 │   │   ├── page.tsx                    # main UI
 │   │   └── globals.css                # dark theme
 │   ├── lib/
-│   │   ├── zai.ts                      # Z.ai SDK wrapper
+│   │   ├── openai.ts                   # OpenAI text API wrapper
+│   │   ├── zai.ts                      # Z.ai media API wrapper (legacy)
 │   │   ├── storage.ts                  # file storage helper
 │   │   ├── store.ts                    # Zustand store
 │   │   ├── types.ts                    # shared types
@@ -121,3 +124,8 @@ HOST=0.0.0.0
 
 MIT
 "# kontenai-studio" 
+
+
+## OpenAI configuration
+
+Copy `.env.example` to `.env`, then set `OPENAI_API_KEY` and optionally `OPENAI_MODEL`. Keep `.env` server-side and out of Git. Text generation uses OpenAI; image, TTS, and video still use the legacy Z.ai integration in this stage.
