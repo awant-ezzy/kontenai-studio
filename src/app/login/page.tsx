@@ -37,7 +37,7 @@ export default function LoginPage() {
     <main className="flex min-h-screen items-center justify-center bg-background px-4">
       <form onSubmit={handleSubmit} className="w-full max-w-sm space-y-5 rounded-2xl border bg-card p-8 shadow-xl">
         <div className="space-y-2 text-center">
-          <h1 className="text-2xl font-bold">KontenAI Studio</h1>
+          <img src="/logo.svg" alt="AWANT Konten AI Studio" className="mx-auto h-auto w-64 max-w-full" />
           <p className="text-sm text-muted-foreground">Masuk menggunakan password administrator.</p>
         </div>
         <div className="space-y-2">
