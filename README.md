@@ -35,7 +35,7 @@ Contoh konfigurasi tersedia di `.env.example`.
 - `OPENAI_API_KEY`: wajib, hanya di server.
 - `OPENAI_TEXT_MODEL`: default `gpt-6-luna`.
 - `OPENAI_IMAGE_MODEL`: default `gpt-image-2.5-flare`.
-- `OPENAI_TTS_MODEL`: default `gpt-4o-mini-tts` (periksa jadwal deprecasi provider sebelum penggunaan jangka panjang).
+- `OPENAI_TTS_MODEL`: default `gpt-4o-mini-tts` (OpenAI telah menjadwalkan penghentian model ini pada 6 Januari 2027; adapter suara perlu dimigrasikan sebelum tanggal tersebut).
 - `DATABASE_URL`: lokasi SQLite, default deployment `file:/opt/kontenai/db/custom.db`.
 
 Jangan gunakan awalan `NEXT_PUBLIC_` untuk API key. Jangan mengunggah `.env` atau file kredensial ke GitHub.
@@ -50,7 +50,7 @@ Update script membuat backup SQLite, menghentikan service selama proses update, 
 
 ## Catatan keamanan produksi
 
-Aplikasi versi ini masih perlu autentikasi admin dan perlindungan API sebelum dibuka ke internet publik. Jalankan hanya di jaringan tepercaya atau di balik akses yang dibatasi sampai lapisan autentikasi selesai diterapkan.
+Aplikasi kini menyediakan satu akun admin berbasis `ADMIN_PASSWORD` dan sesi bertanda tangan `AUTH_SECRET`, dengan pemeriksaan autentikasi pada Proxy dan route API utama. Tetap pasang HTTPS, batasi akses jaringan, dan gunakan password serta secret acak yang kuat sebelum membuka aplikasi ke internet.
 
 ## Lisensi
 
