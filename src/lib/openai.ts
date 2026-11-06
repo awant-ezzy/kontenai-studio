@@ -67,7 +67,7 @@ async function requestCompletion(
 
       if (!response.ok) {
         const message = result.error?.message || `OpenAI API request failed (HTTP ${response.status}).`;
-        const error = new Error(message);
+        const error = Object.assign(new Error(message), { status: response.status });
         const retryable = response.status === 429 || [500, 502, 503, 504].includes(response.status);
 
         if (!retryable || attempt === 3) {
@@ -83,14 +83,14 @@ async function requestCompletion(
       }
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Unknown OpenAI request error';
-      const isHttpError = error instanceof Error && /OpenAI API request failed/.test(error.message);
-      if (isHttpError) {
-        lastError = error as Error;
-        if (attempt === 3) throw error;
-      } else {
-        lastError = new Error(message);
-        if (attempt === 3) throw lastError;
+      const status = typeof error === 'object' && error !== null && 'status' in error
+        ? Number((error as { status?: unknown }).status)
+        : 0;
+      if (status && status !== 429 && ![500, 502, 503, 504].includes(status)) {
+        throw error;
       }
+      lastError = error instanceof Error ? error : new Error(message);
+      if (attempt === 3) throw lastError;
     }
 
     await new Promise((resolve) => setTimeout(resolve, Math.min(1_000 * 2 ** attempt, 8_000)));
