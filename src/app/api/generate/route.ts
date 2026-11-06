@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { isAuthenticatedRequest } from '@/lib/auth';
 import { db } from '@/lib/db';
 import { chatJSON, generateImage, generateTTS, generateVideo, saveBase64Image, saveBuffer } from '@/lib/openai';
 import { ensureUploadsDir, getPublicUrl, PLATFORM_IMAGE_SIZE, PLATFORM_LABEL } from '@/lib/storage';
@@ -399,6 +400,7 @@ async function runPipeline(
 }
 
 export async function POST(req: NextRequest) {
+  if (!isAuthenticatedRequest(req)) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   try {
     const body = (await req.json()) as GenerationPayload;
     if (!body.topic || !body.topic.trim()) {
@@ -449,7 +451,8 @@ export async function POST(req: NextRequest) {
   }
 }
 
-export async function GET() {
+export async function GET(req: NextRequest) {
+  if (!isAuthenticatedRequest(req)) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   const items = await db.content.findMany({
     orderBy: { createdAt: 'desc' },
     take: 100,
