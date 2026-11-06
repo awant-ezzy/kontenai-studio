@@ -148,7 +148,7 @@ Return ONLY the JSON object, no markdown fences, no commentary.`;
       { role: 'system', content: sys },
       { role: 'user', content: user },
     ],
-    { temperature: 0.85, maxTokens: 4096 }
+    { maxTokens: 4096 }
   );
 
   return normalizeTextSet(result);
