@@ -105,8 +105,8 @@ export default function Home() {
             <p className="text-[10px] text-muted-foreground leading-tight">Generator konten multi-platform dengan OpenAI</p>
           </div>
         </div>
-        <div className="hidden sm:flex items-center gap-2">
-          <div className="flex items-center gap-1.5 rounded-full bg-emerald-500/10 px-3 py-1 text-xs text-emerald-500">
+        <div className="flex items-center gap-2">
+          <div className="hidden sm:flex items-center gap-1.5 rounded-full bg-emerald-500/10 px-3 py-1 text-xs text-emerald-500">
             <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
             OpenAI Provider
           </div>
