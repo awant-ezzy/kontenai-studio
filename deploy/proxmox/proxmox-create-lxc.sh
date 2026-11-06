@@ -56,6 +56,12 @@ if ! pveam list "${TEMPLATE_STORAGE}" 2>/dev/null | grep -q "ubuntu-24.04-standa
     pveam download "${TEMPLATE_STORAGE}" ubuntu-24.04-standard_24.04-1_amd64.tar.xz
 fi
 
+TEMPLATE_VOLID="$(pveam list "${TEMPLATE_STORAGE}" | awk '$1 ~ /ubuntu-24.04-standard/ {print $1; exit}')"
+if [[ -z "${TEMPLATE_VOLID}" ]]; then
+  echo "ERROR: Ubuntu 24.04 template not found in ${TEMPLATE_STORAGE}." >&2
+  exit 1
+fi
+
 # --- 2. Create the container ---
 echo ">> Creating LXC container ${CT_ID}..."
 NET_CFG="name=eth0,bridge=${CT_BRIDGE},ip=${CT_IP}"
@@ -63,7 +69,7 @@ if [[ -n "${CT_GW}" ]]; then
   NET_CFG="${NET_CFG},gw=${CT_GW}"
 fi
 
-pct create "${CT_ID}" "${TEMPLATE_STORAGE}:vztmpl/ubuntu-24.04-standard" \
+pct create "${CT_ID}" "${TEMPLATE_VOLID}" \
   --arch amd64 \
   --hostname "${CT_HOSTNAME}" \
   --cores "${CT_CORES}" \
@@ -190,11 +196,6 @@ server {
     client_max_body_size 200M;
     proxy_read_timeout 300s;
     proxy_send_timeout 300s;
-    location /uploads/ {
-        alias /opt/kontenai/public/uploads/;
-        expires 7d;
-        add_header Cache-Control \"public, immutable\";
-    }
     location / {
         proxy_pass http://127.0.0.1:3000;
         proxy_http_version 1.1;
