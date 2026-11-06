@@ -14,6 +14,7 @@ interface GenerationPayload {
   platforms: string[];
   tone?: string;
   niche?: string;
+  generateThumbnail?: boolean;
   generateVoiceover?: boolean;
   generateVideo?: boolean;
 }
@@ -184,6 +185,7 @@ async function runPipeline(
   language: 'id' | 'en',
   tone: string,
   niche: string,
+  wantThumbnail: boolean,
   wantVoiceover: boolean,
   wantVideo: boolean
 ) {
@@ -231,7 +233,8 @@ async function runPipeline(
       ]);
     }
 
-    // Step 2: Thumbnails (sequential)
+    // Step 2: Thumbnails (sequential, optional for text-only OpenAI testing)
+    if (wantThumbnail) {
     await updateProgress(55, 'Membuat thumbnail AI per platform');
     for (let i = 0; i < platforms.length; i++) {
       const p = platforms[i];
@@ -259,6 +262,8 @@ async function runPipeline(
       if (platforms.length > 1) {
         await new Promise((r) => setTimeout(r, 600));
       }
+    }
+
     }
 
     // Step 3: Voiceover (per platform)
@@ -416,6 +421,7 @@ export async function POST(req: NextRequest) {
     }
     const tone = body.tone || 'casual';
     const niche = body.niche || 'general';
+    const wantThumbnail = body.generateThumbnail !== false;
     const wantVoiceover = body.generateVoiceover !== false;
     const wantVideo = body.generateVideo !== false;
 
@@ -434,7 +440,7 @@ export async function POST(req: NextRequest) {
     });
 
     // Fire pipeline in background — return immediately
-    void runPipeline(content.id, body, platforms, language, tone, niche, wantVoiceover, wantVideo).catch((e) =>
+    void runPipeline(content.id, body, platforms, language, tone, niche, wantThumbnail, wantVoiceover, wantVideo).catch((e) =>
       console.error('Background pipeline crashed:', e)
     );
 
